@@ -9,8 +9,9 @@ candidates for cells whose value isn't yet decided.
 > commercially sold as "KenKen™". The puzzle mechanic is not protected and is
 > free to implement; only the "KenKen" name is trademarked.
 
-> **Status:** playable — engine, UI and saved-game persistence are done.
-> Remaining: offline service worker, final icons, on-phone verification.
+> **Status:** feature-complete — generate-and-play with pencil marks, undo,
+> saved games, offline caching and installable icons. Not yet verified on a
+> physical phone.
 
 ## Features
 
@@ -19,6 +20,21 @@ candidates for cells whose value isn't yet decided.
 - **Pencil marks:** record candidate "maybe" values in a cell before committing.
 - Runs fully **offline** once installed, and remembers a game in progress.
 - Installs to the home screen and runs full-screen — no app store required.
+
+## How to play
+
+Fill the grid so every row and every column contains each number exactly once
+(like Sudoku), and every outlined "cage" satisfies its little clue — `12+`
+means the cage's numbers sum to 12, `2÷` means one divides the other to give
+2, and a bare number is given directly. There is always exactly one solution,
+and no guessing is ever required.
+
+Tap a cell, then tap a number. **Pen** enters an answer (tap the same number
+again to clear it); **Notes** pencils in candidate values while you reason.
+Entering an answer automatically erases that candidate from the notes in its
+row and column. Erase and Undo do what they say. On a keyboard: digits to
+enter, arrows to move, `N` toggles notes, `U` or `Ctrl+Z` undoes,
+Backspace erases.
 
 ## Tech
 
@@ -56,7 +72,9 @@ calcudoku/
 │       └── storage.js      # save/restore in-progress game (localStorage)
 ├── assets/icons/           # app icons
 ├── tests/                  # Node test-runner tests for the game logic
-├── tools/serve.js          # dependency-free static server for local dev
+├── tools/
+│   ├── serve.js            # dependency-free static server for local dev
+│   └── make-icons.js       # regenerates the PNG app icons (plain Node)
 ├── package.json            # dev scripts only (test + local serve)
 └── CLAUDE.md               # engineering notes and conventions
 ```
