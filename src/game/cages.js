@@ -83,8 +83,10 @@ export function mergeSingletons(cages, n, maxGivens, maxSize, rng) {
   return cages.filter((cage) => cage.cells.length > 0);
 }
 
-// Split one cage into two contiguous cages by cutting a random edge of a BFS
+// Split one cage into two contiguous cages by cutting an edge of a BFS
 // spanning tree over its cells. Both halves stay contiguous by construction.
+// Prefers the most balanced cut (2+2 over 3+1) so ambiguity fixes in the
+// generator produce as few single-cell givens as possible.
 // Returns the two new cages (without op/target — reassign after splitting).
 export function splitCage(cage, rng) {
   const cells = cage.cells;
@@ -107,8 +109,19 @@ export function splitCage(cage, rng) {
     }
   }
 
-  // Cut a random tree edge: the child's subtree becomes one cage.
-  const [childKey] = choice(treeEdges, rng);
+  // Subtree sizes: every node contributes 1 to each of its ancestors.
+  const subtreeSize = new Map([...parent.keys()].map((k) => [k, 1]));
+  for (const k of parent.keys()) {
+    for (let p = parent.get(k); p !== null; p = parent.get(p)) {
+      subtreeSize.set(p, subtreeSize.get(p) + 1);
+    }
+  }
+
+  // Cut the tree edge giving the most balanced halves (random among ties);
+  // the child's subtree becomes one cage.
+  const score = ([child]) => Math.min(subtreeSize.get(child), cells.length - subtreeSize.get(child));
+  const bestScore = Math.max(...treeEdges.map(score));
+  const [childKey] = choice(treeEdges.filter((e) => score(e) === bestScore), rng);
   const childSet = new Set([childKey]);
   let grew = true;
   while (grew) {

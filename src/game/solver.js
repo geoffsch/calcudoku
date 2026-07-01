@@ -9,9 +9,13 @@
 
 import { cageIndexOf } from "./cages.js";
 
-// Returns up to `limit` solutions, each an n×n grid of 1..n. The search is
-// exhaustive, so fewer than `limit` results means that is the true count.
-export function findSolutions(puzzle, limit = 2) {
+// Full-control entry point: returns { solutions, complete }.
+//   solutions — up to `limit` n×n grids of 1..n.
+//   complete  — true if the search ran to exhaustion (or hit `limit`), false
+//               if it gave up after `maxNodes` search nodes. The generator
+//               uses a budget to discard pathological cage layouts cheaply
+//               instead of grinding on them.
+export function solvePuzzle(puzzle, { limit = 2, maxNodes = Infinity } = {}) {
   const n = puzzle.size;
   const total = n * n;
   const fullMask = ((1 << (n + 1)) - 1) & ~1; // bits 1..n
@@ -32,14 +36,18 @@ export function findSolutions(puzzle, limit = 2) {
   }
 
   // maxProd[k] = largest product k cells can contribute (n^k), for * pruning.
+  // Sized to the largest cage — cages can hold more than n cells.
+  const maxCageLen = Math.max(...cages.map((cage) => cage.cellIdxs.length));
   const maxProd = [1];
-  for (let k = 1; k <= n; k++) maxProd.push(maxProd[k - 1] * n);
+  for (let k = 1; k <= maxCageLen; k++) maxProd.push(maxProd[k - 1] * n);
 
   const grid = new Array(total).fill(0);
   const rowMask = new Array(n).fill(0);
   const colMask = new Array(n).fill(0);
   const solutions = [];
   let filled = 0;
+  let nodes = 0;
+  let aborted = false;
 
   // Can value v go in cell idx as far as its cage is concerned? Latin
   // constraints are already applied via the row/col masks before this.
@@ -51,8 +59,22 @@ export function findSolutions(puzzle, limit = 2) {
       case "+": {
         const sum = cage.sum + v;
         if (rem === 1) return sum === cage.target;
-        // Remaining cells each contribute between 1 and n.
-        return sum + (rem - 1) <= cage.target && sum + (rem - 1) * n >= cage.target;
+        // Bound the remaining cells by their actual row/column candidates
+        // (pretending v is placed), not the loose 1..n range.
+        const vBit = 1 << v;
+        let lo = sum;
+        let hi = sum;
+        for (const other of cage.cellIdxs) {
+          if (other === idx || grid[other] !== 0) continue;
+          let m = ~(rowMask[Math.floor(other / n)] | colMask[other % n]) & fullMask;
+          if (Math.floor(other / n) === Math.floor(idx / n) || other % n === idx % n) {
+            m &= ~vBit;
+          }
+          if (m === 0) return false;
+          lo += 31 - Math.clz32(m & -m); // lowest set bit = min candidate
+          hi += 31 - Math.clz32(m); // highest set bit = max candidate
+        }
+        return lo <= cage.target && hi >= cage.target;
       }
       case "*": {
         // Invariant: cage.prod divides target (only divisor values get placed).
@@ -122,6 +144,10 @@ export function findSolutions(puzzle, limit = 2) {
   }
 
   function search() {
+    if (++nodes > maxNodes) {
+      aborted = true;
+      return;
+    }
     if (filled === total) {
       const solution = [];
       for (let r = 0; r < n; r++) solution.push(grid.slice(r * n, (r + 1) * n));
@@ -154,12 +180,18 @@ export function findSolutions(puzzle, limit = 2) {
       place(bestIdx, v);
       search();
       unplace(bestIdx, v);
-      if (solutions.length >= limit) return;
+      if (solutions.length >= limit || aborted) return;
     }
   }
 
   search();
-  return solutions;
+  return { solutions, complete: !aborted };
+}
+
+// Returns up to `limit` solutions. The search is exhaustive, so fewer than
+// `limit` results means that is the true count.
+export function findSolutions(puzzle, limit = 2) {
+  return solvePuzzle(puzzle, { limit }).solutions;
 }
 
 // Number of solutions, capped at `limit`. countSolutions(p) === 1 means the

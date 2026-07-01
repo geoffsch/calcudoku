@@ -9,8 +9,8 @@ candidates for cells whose value isn't yet decided.
 > commercially sold as "KenKen™". The puzzle mechanic is not protected and is
 > free to implement; only the "KenKen" name is trademarked.
 
-> **Status:** early skeleton — the project structure is in place but no gameplay
-> is implemented yet.
+> **Status:** the puzzle engine (generator, solver, uniqueness guarantee) is
+> implemented and tested; the playable UI is in progress.
 
 ## Features
 
@@ -45,7 +45,9 @@ calcudoku/
 │   │   ├── board.js        # puzzle + player-state data model
 │   │   ├── generator.js    # builds puzzles with a unique solution
 │   │   ├── solver.js       # constraint solver (uniqueness check)
-│   │   └── cages.js        # cage partitioning + clue validation
+│   │   ├── cages.js        # cage partitioning + clue validation
+│   │   ├── latin.js        # random Latin squares (every solution is one)
+│   │   └── rng.js          # seedable randomness (reproducible tests)
 │   ├── ui/                 # everything that touches the DOM
 │   │   ├── render.js       # draw board, cage borders, clues, number pad
 │   │   ├── input.js        # cell selection, entry, pencil-mark toggling

@@ -113,6 +113,23 @@ test("a given pins the ambiguous 2x2 down to one solution", () => {
   assert.deepEqual(found[0], [[1, 2], [2, 1]]);
 });
 
+test("handles cages with more cells than the grid size (regression)", () => {
+  // A 5-cell cage in a 3x3 grid once overflowed the solver's product-bound
+  // table, wrongly yielding zero solutions.
+  const puzzle = {
+    size: 3,
+    cages: [
+      { cells: [[0, 2], [1, 1], [1, 2], [2, 1], [2, 2]], op: "*", target: 12 },
+      { cells: [[0, 0], [0, 1], [1, 0], [2, 0]], op: "*", target: 18 },
+    ],
+  };
+  const found = findSolutions(puzzle, 10);
+  assert.ok(found.length >= 1, "must find the constructing solution");
+  const key = (g) => g.flat().join("");
+  assert.ok(found.map(key).includes("132321213"));
+  assert.deepEqual(found.map(key).sort(), bruteForceSolutions(puzzle).map(key).sort());
+});
+
 test("an unsatisfiable puzzle has zero solutions", () => {
   const puzzle = {
     size: 2,
