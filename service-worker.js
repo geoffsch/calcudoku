@@ -10,7 +10,7 @@
 // the actual file list — with native ES modules every src/**/*.js file is
 // fetched (and must be cached) individually.
 
-const CACHE_VERSION = "calcudoku-v2";
+const CACHE_VERSION = "calcudoku-v3";
 
 const APP_SHELL = [
   "./",

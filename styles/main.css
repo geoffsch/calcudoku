@@ -148,7 +148,7 @@ button {
   position: absolute;
   top: 2px;
   left: 4px;
-  font-size: calc(100cqw / var(--n) * 0.19);
+  font-size: max(9px, calc(100cqw / var(--n) * 0.19));
   font-weight: 600;
   color: var(--text-dim);
   letter-spacing: 0.02em;
@@ -172,7 +172,7 @@ button {
 }
 
 .mark {
-  font-size: calc(100cqw / var(--n) * 0.2);
+  font-size: max(8px, calc(100cqw / var(--n) * 0.2));
   color: var(--accent);
   font-weight: 500;
   line-height: 1;
