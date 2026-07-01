@@ -9,8 +9,8 @@ candidates for cells whose value isn't yet decided.
 > commercially sold as "KenKen™". The puzzle mechanic is not protected and is
 > free to implement; only the "KenKen" name is trademarked.
 
-> **Status:** the puzzle engine (generator, solver, uniqueness guarantee) is
-> implemented and tested; the playable UI is in progress.
+> **Status:** playable — engine, UI and saved-game persistence are done.
+> Remaining: offline service worker, final icons, on-phone verification.
 
 ## Features
 
@@ -56,6 +56,7 @@ calcudoku/
 │       └── storage.js      # save/restore in-progress game (localStorage)
 ├── assets/icons/           # app icons
 ├── tests/                  # Node test-runner tests for the game logic
+├── tools/serve.js          # dependency-free static server for local dev
 ├── package.json            # dev scripts only (test + local serve)
 └── CLAUDE.md               # engineering notes and conventions
 ```
@@ -66,8 +67,10 @@ The app is static files, but browsers block ES modules and service workers over
 `file://`, so serve it over HTTP. Any static server works, for example:
 
 ```bash
-python -m http.server 8000   # then open http://localhost:8000
+npm run serve   # dependency-free Node server, http://localhost:8123
 ```
+
+(or any static server, e.g. `python -m http.server`).
 
 Run the puzzle-logic tests (requires Node.js):
 

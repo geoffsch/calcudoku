@@ -6,6 +6,6 @@
   "type": "module",
   "scripts": {
     "test": "node --test",
-    "serve": "node --version >/dev/null 2>&1 && npx --yes serve ."
+    "serve": "node tools/serve.js"
   }
 }

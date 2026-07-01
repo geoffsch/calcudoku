@@ -7,6 +7,9 @@ Thumbs.db
 .idea/
 *.swp
 
+# Claude Code local config (machine-specific launch paths)
+.claude/
+
 # Node — used only for local dev tooling and tests, never shipped to the phone
 node_modules/
 npm-debug.log*
