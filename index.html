@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <!-- viewport-fit=cover + user-scalable=no gives a proper app feel on the phone -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <meta name="theme-color" content="#1e2430" />
+  <title>Calcudoku</title>
+
+  <!-- PWA plumbing -->
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="assets/icons/icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="assets/icons/icon.svg" />
+
+  <link rel="stylesheet" href="styles/main.css" />
+</head>
+<body>
+  <div id="app">
+    <!-- UI is rendered by src/ui/*. This is just the mount point. -->
+    <noscript>This app needs JavaScript enabled.</noscript>
+  </div>
+
+  <!-- type="module" enables native ES modules — no bundler required -->
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+/* Global styles and layout for the Calcudoku board.
+ * Kept in one file for now; split if it grows.
+ *
+ * Design intent: dark, high-contrast, touch-friendly. The grid should scale to
+ * fit the phone width with large tap targets and clearly readable cage clues.
+ */
+
+:root {
+  --bg: #1e2430;
+  --surface: #2a3140;
+  --grid-line: #4a5262;
+  --cage-line: #e6e9ef;
+  --text: #e6e9ef;
+  --text-dim: #9aa4b6;
+  --accent: #5b9bd5;
+  --error: #d55b5b;
+
+  /* Safe-area insets so the board clears notches / gesture bars */
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  overscroll-behavior: none; /* stop pull-to-refresh eating drags on the grid */
+}
+
+#app {
+  min-height: 100%;
+  padding: var(--safe-top) 0 var(--safe-bottom);
+  display: flex;
+  flex-direction: column;
+}
+
+/* TODO: .board, .cell, .cage-clue, .pencil-marks, number pad, controls.
+ * See src/ui/render.js for the DOM these styles will target. */

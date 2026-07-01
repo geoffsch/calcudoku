@@ -1,0 +1,11 @@
+{
+  "name": "calcudoku",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Generate-and-play Calcudoku puzzles as an offline PWA.",
+  "type": "module",
+  "scripts": {
+    "test": "node --test",
+    "serve": "node --version >/dev/null 2>&1 && npx --yes serve ."
+  }
+}

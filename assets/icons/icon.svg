@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Calcudoku">
+  <rect width="512" height="512" rx="72" fill="#1e2430"/>
+  <g fill="none" stroke="#4a5262" stroke-width="8">
+    <path d="M96 224h320M96 320h320M224 96v320M320 96v320"/>
+  </g>
+  <!-- thick cage outlines -->
+  <g fill="none" stroke="#e6e9ef" stroke-width="14" stroke-linejoin="round">
+    <rect x="96" y="96" width="320" height="320" rx="10"/>
+    <path d="M224 96V224H96M320 224v192M416 320H320"/>
+  </g>
+  <g fill="#e6e9ef" font-family="system-ui, sans-serif" font-weight="700">
+    <text x="120" y="150" font-size="48">6+</text>
+    <text x="344" y="150" font-size="48">2÷</text>
+    <text x="120" y="360" font-size="48">3−</text>
+  </g>
+</svg>

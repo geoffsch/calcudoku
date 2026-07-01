@@ -1,0 +1,26 @@
+# OS cruft
+.DS_Store
+Thumbs.db
+
+# Editors / IDEs
+.vscode/
+.idea/
+*.swp
+
+# Node — used only for local dev tooling and tests, never shipped to the phone
+node_modules/
+npm-debug.log*
+package-lock.json.bak
+
+# Local environment
+.env
+.env.local
+
+# Private working files — kept out of the public repo
+# PLAN.md = personal build log / progress notes
+PLAN.md
+# *.local.md = author context and any other machine-local notes
+*.local.md
+
+# Build output (only if we later add a bundler; empty for the no-build setup)
+dist/
