@@ -14,9 +14,14 @@ Author-specific context (experience level, how much to explain) lives in a local
 git-ignored file imported at the end of this document.
 
 ## Canonical state
-`PLAN.md` is the source of truth for what's done and what's next. Read it before
-resuming work. After completing a step, tick its checkbox and record actual
-outcomes there.
+Plans live in the git-ignored `plans/` directory (private; not in the public
+repo):
+- `plans/BACKLOG.md` — one-line ideas not yet fleshed out. Promote an item to its
+  own `plans/<feature>.md` when you start working it, and delete the backlog line.
+- `plans/<feature>.md` — an active plan. Read it before resuming work; tick
+  checkboxes and record actual outcomes as you go.
+- `plans/<feature>.done.md` — a completed plan (renamed with the `.done.md`
+  suffix). The v1 build is recorded in `plans/v1-build.done.md`.
 
 ## Why this stack (rationale)
 Chosen for lowest friction to get a single-purpose puzzle game onto an Android

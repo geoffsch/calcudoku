@@ -20,8 +20,8 @@ package-lock.json.bak
 .env.local
 
 # Private working files — kept out of the public repo
-# PLAN.md = personal build log / progress notes
-PLAN.md
+# plans/ = personal build logs, backlog, and future-feature plans
+plans/
 # *.local.md = author context and any other machine-local notes
 *.local.md
 
