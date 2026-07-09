@@ -5,6 +5,8 @@ Progressive Web App. It generates puzzles with a guaranteed unique solution and
 provides a touch-friendly board for solving them, including pencil-mark
 candidates for cells whose value isn't yet decided.
 
+**Live demo:** https://geoffsch.github.io/calcudoku/
+
 > Calcudoku (also known as Mathdoku) is the trademark-free name for the puzzle
 > commercially sold as "KenKen™". The puzzle mechanic is not protected and is
 > free to implement; only the "KenKen" name is trademarked.
