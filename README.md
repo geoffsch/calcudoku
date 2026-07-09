@@ -9,10 +9,6 @@ candidates for cells whose value isn't yet decided.
 > commercially sold as "KenKen™". The puzzle mechanic is not protected and is
 > free to implement; only the "KenKen" name is trademarked.
 
-> **Status:** feature-complete — generate-and-play with pencil marks, undo,
-> saved games, offline caching and installable icons. Not yet verified on a
-> physical phone.
-
 ## Features
 
 - Generates Calcudoku puzzles with a **single guaranteed solution**.
