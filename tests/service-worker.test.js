@@ -19,7 +19,10 @@ function listFiles(dir) {
 
 test("service worker pre-caches exactly the shipped app files", () => {
   const sw = readFileSync(join(ROOT, "service-worker.js"), "utf8");
-  const listed = [...sw.matchAll(/"\.\/([^"]*)"/g)].map((m) => m[1]).filter((p) => p !== "");
+  // Scope to the APP_SHELL array so other "./…" strings (e.g. the module
+  // import of version.js) aren't mistaken for cached entries.
+  const shell = sw.match(/APP_SHELL = \[([\s\S]*?)\]/)[1];
+  const listed = [...shell.matchAll(/"\.\/([^"]*)"/g)].map((m) => m[1]).filter((p) => p !== "");
 
   const expected = [
     "index.html",
@@ -32,9 +35,11 @@ test("service worker pre-caches exactly the shipped app files", () => {
   assert.deepEqual(listed.sort(), expected.sort());
 });
 
-test("cache version changes when shipped files change (manual reminder)", () => {
-  // Not automatable without a build step — this just pins the format so a
-  // future edit that deletes the version string outright fails a test.
+test("cache name is derived from APP_VERSION so a version bump busts the cache", () => {
+  // The cache name is built from APP_VERSION (src/version.js), so bumping the
+  // app version automatically changes it — no separate cache-version edit
+  // needed. Pin that wiring so a future edit can't silently hardcode it back.
   const sw = readFileSync(join(ROOT, "service-worker.js"), "utf8");
-  assert.match(sw, /const CACHE_VERSION = "calcudoku-v\d+"/);
+  assert.match(sw, /import \{ APP_VERSION \} from "\.\/src\/version\.js"/);
+  assert.match(sw, /const CACHE_VERSION = `calcudoku-v\$\{APP_VERSION\}`/);
 });

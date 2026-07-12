@@ -189,7 +189,8 @@ function persist() {
 function registerServiceWorker() {
   if (!("serviceWorker" in navigator)) return;
   window.addEventListener("load", () => {
-    navigator.serviceWorker.register("service-worker.js").catch((err) => {
+    // Module worker so the SW can import shared constants (APP_VERSION).
+    navigator.serviceWorker.register("service-worker.js", { type: "module" }).catch((err) => {
       console.warn("Service worker registration failed:", err);
     });
   });
