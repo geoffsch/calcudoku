@@ -4,6 +4,7 @@
 // up by main.js.
 
 import { MIN_SIZE, MAX_SIZE, DIFFICULTIES } from "../game/generator.js";
+import { APP_VERSION } from "../version.js";
 
 // handlers: { onNewGame(size, difficulty), onMode(mode), onErase(), onUndo(), onDigit(d) }
 export function buildChrome(root, handlers) {
@@ -39,7 +40,10 @@ export function buildChrome(root, handlers) {
   actions.append(modeGroup, eraseBtn, undoBtn);
   pad.append(digits, actions);
 
-  root.append(header, boardWrap, pad);
+  // --- Version footer -------------------------------------------------------
+  const footer = el("footer", "app-version", `v${APP_VERSION}`);
+
+  root.append(header, boardWrap, pad, footer);
 
   // --- New-game dialog ------------------------------------------------------
   const dialog = buildNewGameDialog(handlers.onNewGame);

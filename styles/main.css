@@ -337,3 +337,13 @@ button {
   gap: 8px;
   margin-top: 18px;
 }
+
+/* --- Version footer --------------------------------------------------------- */
+
+.app-version {
+  margin-top: auto; /* sink to the bottom of the app column when space allows */
+  color: var(--text-dim);
+  font-size: 11px;
+  letter-spacing: 0.03em;
+  opacity: 0.75;
+}
