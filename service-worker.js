@@ -5,12 +5,18 @@
 // is only a fallback for anything unexpected). Old caches are deleted on
 // activate.
 //
-// IMPORTANT: bump CACHE_VERSION whenever any shipped file changes, otherwise
-// installed clients keep the old cached copy. And keep APP_SHELL in sync with
-// the actual file list — with native ES modules every src/**/*.js file is
-// fetched (and must be cached) individually.
+// IMPORTANT: the cache name is derived from APP_VERSION (src/version.js), so
+// bumping the app version is what busts the cache — otherwise installed clients
+// keep the old cached copy. Also keep APP_SHELL in sync with the actual file
+// list: with native ES modules every src/**/*.js file is fetched (and must be
+// cached) individually.
+//
+// This is an ES-module worker (registered with { type: "module" }) so it can
+// import the shared version constant; classic workers can't.
 
-const CACHE_VERSION = "calcudoku-v3";
+import { APP_VERSION } from "./src/version.js";
+
+const CACHE_VERSION = `calcudoku-v${APP_VERSION}`;
 
 const APP_SHELL = [
   "./",

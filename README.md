@@ -39,7 +39,9 @@ Backspace erases.
 Plain HTML, CSS, and JavaScript (ES modules), with **no build step** — the app
 is served as static files. It has **no runtime dependencies**; the only tooling
 is a test runner and a static file server used during development. Offline
-support and installability come from a web app manifest and a service worker.
+support and installability come from a web app manifest and a service worker
+(loaded as an ES module, so a Chromium-based browser such as Chrome is required —
+which matches the Android target).
 
 The puzzle engine under `src/game/` is deliberately free of any browser/DOM code
 so it can be unit-tested in Node.
@@ -107,8 +109,11 @@ is the simplest option:
 3. After a minute, Pages serves the app at
    `https://<username>.github.io/<repo>/`.
 
-When updating a deployed app, bump `CACHE_VERSION` in `service-worker.js` so
-installed clients fetch the new files instead of the cached copy.
+When updating a deployed app, bump `APP_VERSION` in `src/version.js` (and the
+matching `version` in `package.json`). The service worker derives its cache name
+from it, so the bump busts the offline cache and installed clients fetch the new
+files. The app footer shows the running version, so you can confirm a device has
+picked up the update.
 
 ## Installing on a phone
 
