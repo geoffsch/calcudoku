@@ -18,6 +18,7 @@ const APP_SHELL = [
   "./manifest.webmanifest",
   "./styles/main.css",
   "./src/main.js",
+  "./src/version.js",
   "./src/game/board.js",
   "./src/game/cages.js",
   "./src/game/generator.js",

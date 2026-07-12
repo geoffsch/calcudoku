@@ -55,6 +55,7 @@ calcudoku/
 │   └── main.css            # layout + board styling
 ├── src/
 │   ├── main.js             # entry point: wires engine ↔ UI, registers SW
+│   ├── version.js          # single source of truth for the app version
 │   ├── game/               # pure puzzle logic, no DOM (unit-tested)
 │   │   ├── board.js        # puzzle + player-state data model
 │   │   ├── generator.js    # builds puzzles with a unique solution
