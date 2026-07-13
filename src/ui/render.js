@@ -86,9 +86,13 @@ export function updateBoard(cellEls, puzzle, state) {
         markEls[d - 1].textContent = value === 0 && hasMark(state.marks, r, c, d) ? d : "";
       }
 
-      const selected =
-        state.selected !== null && state.selected[0] === r && state.selected[1] === c;
+      const selected = state.selection.has(`${r},${c}`);
       cell.classList.toggle("selected", selected);
+      // The anchor (last-tapped / keyboard focus) gets a stronger ring, but only
+      // while it's actually part of the selection.
+      const isAnchor =
+        state.anchor !== null && state.anchor[0] === r && state.anchor[1] === c;
+      cell.classList.toggle("anchor", selected && isAnchor);
     }
   }
 }

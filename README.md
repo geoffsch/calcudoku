@@ -30,9 +30,16 @@ and no guessing is ever required.
 Tap a cell, then tap a number. **Pen** enters an answer (tap the same number
 again to clear it); **Notes** pencils in candidate values while you reason.
 Entering an answer automatically erases that candidate from the notes in its
-row and column. Erase and Undo do what they say. On a keyboard: digits to
-enter, arrows to move, `N` toggles notes, `U` or `Ctrl+Z` undoes,
-Backspace erases.
+row and column. Erase and Undo do what they say.
+
+To act on several cells at once — say to pencil the same candidates into a
+known trio — tap each cell to add it to the selection, then tap a number (or
+Erase); it applies to all of them. Once you enter something, the next cell you
+tap starts a fresh selection. Switching between Pen and Notes clears the
+selection too.
+
+On a keyboard: digits to enter, arrows to move, `N` toggles notes, `U` or
+`Ctrl+Z` undoes, Backspace erases, `Esc` clears the selection.
 
 ## Tech
 

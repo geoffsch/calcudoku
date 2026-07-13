@@ -3,7 +3,7 @@
 // (src/state). Also registers the service worker for offline use.
 
 import { generatePuzzle } from "./game/generator.js";
-import { createPlayerState, isSolved, toggleMark } from "./game/board.js";
+import { createPlayerState, isSolved, applyMarks, applyValue, eraseCells } from "./game/board.js";
 import { buildBoard, updateBoard, buildNumberPad } from "./ui/render.js";
 import { buildChrome } from "./ui/controls.js";
 import { attachBoardInput, attachKeyboardInput } from "./ui/input.js";
@@ -21,7 +21,9 @@ const app = {
   puzzle: null,
   values: null,
   marks: null,
-  selected: null,
+  selection: new Set(), // set of "r,c" keys — a tap toggles membership
+  anchor: null, // [r, c] of the last-tapped cell; arrow keys move from here
+  selectionSealed: false, // once an action is applied, the next tap starts fresh
   mode: "pen", // "pen" commits values, "pencil" toggles candidate marks
   undoStack: [],
   solved: false,
@@ -33,57 +35,82 @@ const app = {
 // Mutations. Every player action funnels through here: snapshot cells for
 // undo, apply, persist, re-render.
 
+// The current selection as a list of [r, c] pairs.
+function selectionCells() {
+  return [...app.selection].map((k) => k.split(",").map(Number));
+}
+
+function clearSelection() {
+  app.selection.clear();
+  app.anchor = null;
+  app.selectionSealed = false;
+}
+
+// A tap toggles a cell in/out of the selection. "Seal-after-apply": once an
+// action has been applied, the next tap starts a fresh selection instead of
+// extending the old one — so filling cells one by one never accumulates, while
+// a not-yet-applied selection keeps growing (tap a trio, then note 1/3/9).
 function selectCell(r, c) {
-  app.selected = [r, c];
+  if (app.solved) return;
+  if (app.selectionSealed) {
+    app.selection.clear();
+    app.selectionSealed = false;
+  }
+  const key = `${r},${c}`;
+  if (app.selection.has(key)) app.selection.delete(key);
+  else app.selection.add(key);
+  app.anchor = [r, c];
   refresh();
 }
 
+// Arrow keys: collapse to a single cell and move the anchor (desktop nav).
 function moveSelection(dr, dc) {
   const n = app.puzzle.size;
-  const [r, c] = app.selected ?? [0, 0];
-  selectCell(
-    Math.min(n - 1, Math.max(0, r + dr)),
-    Math.min(n - 1, Math.max(0, c + dc))
-  );
+  const [r, c] = app.anchor ?? [0, 0];
+  const nr = Math.min(n - 1, Math.max(0, r + dr));
+  const nc = Math.min(n - 1, Math.max(0, c + dc));
+  app.selection = new Set([`${nr},${nc}`]);
+  app.anchor = [nr, nc];
+  app.selectionSealed = false;
+  refresh();
 }
 
 function enterDigit(d) {
-  if (app.solved || !app.selected) return;
-  const [r, c] = app.selected;
+  if (app.solved || app.selection.size === 0) return;
+  const cells = selectionCells();
 
   if (app.mode === "pencil") {
-    if (app.values[r][c] !== 0) return; // no marks on committed cells
-    pushUndo([[r, c]]);
-    toggleMark(app.marks, r, c, d);
+    // applyMarks skips committed cells; snapshot only the ones it can change.
+    const eligible = cells.filter(([r, c]) => app.values[r][c] === 0);
+    if (eligible.length === 0) return;
+    pushUndo(eligible);
+    applyMarks(app.marks, app.values, eligible, d);
   } else {
     const n = app.puzzle.size;
-    // Snapshot the whole row + column: committing a value auto-cleans that
-    // candidate from peers' pencil marks, and undo must restore those too.
+    // Committing a value auto-cleans that candidate from peers' pencil marks, so
+    // snapshot each selected cell's whole row + column; undo must restore those.
     const affected = [];
-    for (let i = 0; i < n; i++) affected.push([r, i], [i, c]);
-    pushUndo(affected);
-
-    app.values[r][c] = app.values[r][c] === d ? 0 : d; // same digit toggles off
-    if (app.values[r][c] !== 0) {
-      const bit = 1 << d;
-      for (let i = 0; i < n; i++) {
-        app.marks[r][i] &= ~bit;
-        app.marks[i][c] &= ~bit;
-      }
+    for (const [r, c] of cells) {
+      for (let i = 0; i < n; i++) affected.push([r, i], [i, c]);
     }
+    pushUndo(affected);
+    applyValue(app.values, app.marks, cells, d, n);
     checkSolved();
   }
+  app.selectionSealed = true;
   persist();
   refresh();
 }
 
 function erase() {
-  if (app.solved || !app.selected) return;
-  const [r, c] = app.selected;
-  if (app.values[r][c] === 0 && app.marks[r][c] === 0) return;
-  pushUndo([[r, c]]);
-  app.values[r][c] = 0;
-  app.marks[r][c] = 0;
+  if (app.solved || app.selection.size === 0) return;
+  const cells = selectionCells().filter(
+    ([r, c]) => app.values[r][c] !== 0 || app.marks[r][c] !== 0
+  );
+  if (cells.length === 0) return;
+  pushUndo(cells);
+  eraseCells(app.values, app.marks, cells);
+  app.selectionSealed = true;
   persist();
   refresh();
 }
@@ -102,8 +129,16 @@ function undo() {
 
 function setMode(mode) {
   app.mode = mode;
+  clearSelection(); // don't carry a selection across a mode change
   app.ui.setMode(mode);
   persist();
+  refresh();
+}
+
+function clearSelectionAction() {
+  if (app.selection.size === 0) return;
+  clearSelection();
+  refresh();
 }
 
 function pushUndo(cells) {
@@ -123,7 +158,7 @@ function pushUndo(cells) {
 function checkSolved() {
   if (!isSolved(app.puzzle, app.values)) return;
   app.solved = true;
-  app.selected = null;
+  clearSelection();
   if (navigator.vibrate) navigator.vibrate([60, 40, 120]);
   showSolvedOverlay();
 }
@@ -150,7 +185,7 @@ function startGame(game) {
   app.marks = game.marks;
   app.mode = game.mode;
   app.solved = game.solved;
-  app.selected = null;
+  clearSelection();
   app.undoStack = [];
 
   app.ui.hideOverlay();
@@ -215,6 +250,7 @@ function init() {
     onUndo: undo,
     onMove: moveSelection,
     onToggleMode: () => setMode(app.mode === "pen" ? "pencil" : "pen"),
+    onClear: clearSelectionAction,
   });
 
   const settings = loadSettings() ?? DEFAULT_SETTINGS;

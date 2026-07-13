@@ -144,6 +144,12 @@ button {
   box-shadow: inset 0 0 0 2px var(--accent);
 }
 
+/* The anchor cell (last tapped / keyboard focus) gets a thicker ring so it
+   stands out within a multi-cell selection. */
+.cell.selected.anchor {
+  box-shadow: inset 0 0 0 3.5px var(--accent);
+}
+
 .clue {
   position: absolute;
   top: 2px;

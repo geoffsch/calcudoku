@@ -1,6 +1,7 @@
 // Input wiring: cell selection by tap/click (event delegation on the board)
 // and a keyboard layer for desktop play — digits enter values, arrows move
-// the selection, Backspace/Delete erases, N toggles notes, U/Ctrl+Z undoes.
+// the selection, Backspace/Delete erases, N toggles notes, U/Ctrl+Z undoes,
+// Escape clears the selection.
 
 // actions: { onSelect(r, c), onDigit(d), onErase(), onUndo(), onToggleMode(), size() }
 export function attachBoardInput(boardEl, actions) {
@@ -36,6 +37,8 @@ export function attachKeyboardInput(actions) {
       actions.onToggleMode();
     } else if (e.key === "u" || e.key === "U" || (e.key === "z" && (e.ctrlKey || e.metaKey))) {
       actions.onUndo();
+    } else if (e.key === "Escape") {
+      actions.onClear();
     } else {
       return;
     }
