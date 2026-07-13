@@ -69,6 +69,12 @@ phone, given no prior mobile experience:
 - Ensure you update README.md as you build to ensure it accurately reflects the
   status and structure of the repo. Do this in the same commit as making the change,
   not in a dedicated follow-up.
+- **Bump the version when you ship client-facing changes** (anything served to
+  the browser: `src/**`, `styles/**`, `index.html`, `service-worker.js`, the
+  manifest) — otherwise installed phones keep the cached old code. Do it in the
+  same commit/PR, not a follow-up, and include it as a step in any feature plan
+  that touches those files. See the README "Deployment" section for how.
+  Internal-only changes (tests, `plans/**`, tooling, README-only) don't need it.
 - Level of explanation to assume: see the imported author context below.
 
 <!-- Local, git-ignored author context. Absent on fresh clones (import is
