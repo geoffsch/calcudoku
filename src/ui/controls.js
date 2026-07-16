@@ -6,7 +6,8 @@
 import { MIN_SIZE, MAX_SIZE, DIFFICULTIES } from "../game/generator.js";
 import { APP_VERSION } from "../version.js";
 
-// handlers: { onNewGame(size, difficulty), onMode(mode), onErase(), onUndo(), onDigit(d) }
+// handlers: { onNewGame(size, difficulty), onMode(mode), onErase(), onUndo(),
+//             onDigit(d), onToggleTheme() }
 export function buildChrome(root, handlers) {
   root.textContent = "";
 
@@ -14,8 +15,9 @@ export function buildChrome(root, handlers) {
   const header = el("header", "topbar");
   const title = el("h1", "title", "Calcudoku");
   const info = el("span", "puzzle-info");
+  const themeBtn = button("theme-toggle", "");
   const newBtn = button("btn btn-new", "New game");
-  header.append(title, info, newBtn);
+  header.append(title, info, themeBtn, newBtn);
 
   // --- Board + overlay ----------------------------------------------------
   const boardWrap = el("div", "board-wrap");
@@ -54,6 +56,7 @@ export function buildChrome(root, handlers) {
   undoBtn.addEventListener("click", handlers.onUndo);
   penBtn.addEventListener("click", () => handlers.onMode("pen"));
   notesBtn.addEventListener("click", () => handlers.onMode("pencil"));
+  themeBtn.addEventListener("click", handlers.onToggleTheme);
 
   return {
     board,
@@ -62,6 +65,16 @@ export function buildChrome(root, handlers) {
     setMode(mode) {
       penBtn.classList.toggle("active", mode === "pen");
       notesBtn.classList.toggle("active", mode === "pencil");
+    },
+    // Reflect the active theme on the toggle: the glyph shows the theme you'd
+    // switch *to*, and the label names that action for screen readers.
+    setThemeToggle(theme) {
+      const toDark = theme === "light";
+      themeBtn.textContent = toDark ? "🌙" : "☀";
+      themeBtn.setAttribute(
+        "aria-label",
+        toDark ? "Switch to dark theme" : "Switch to light theme",
+      );
     },
     setInfo(text) {
       info.textContent = text;

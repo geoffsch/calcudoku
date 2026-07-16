@@ -103,3 +103,19 @@ test("settings round-trip and validation", () => {
   localStorage.setItem("calcudoku.settings", JSON.stringify({ schema: 1, size: "six" }));
   assert.equal(loadSettings(), null);
 });
+
+test("theme persists and only valid values survive", () => {
+  saveSettings({ size: 4, difficulty: "easy", theme: "dark" });
+  assert.deepEqual(loadSettings(), { size: 4, difficulty: "easy", theme: "dark" });
+
+  // An absent theme is simply omitted (caller defaults to light) — not an error.
+  saveSettings({ size: 4, difficulty: "easy" });
+  assert.deepEqual(loadSettings(), { size: 4, difficulty: "easy" });
+
+  // A bogus theme is dropped rather than passed through.
+  localStorage.setItem(
+    "calcudoku.settings",
+    JSON.stringify({ schema: 1, size: 4, difficulty: "easy", theme: "neon" }),
+  );
+  assert.deepEqual(loadSettings(), { size: 4, difficulty: "easy" });
+});
