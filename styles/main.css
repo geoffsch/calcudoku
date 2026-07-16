@@ -6,7 +6,32 @@
  * board, whatever the grid size — no JS measurement needed.
  */
 
+/* Theme palettes. The bare :root is the default (light, earth-toned) so the
+ * first paint is correct with no JS; [data-theme="dark"] overrides it. main.js
+ * sets data-theme on <html> from the saved preference. */
 :root {
+  /* Light — warm earth tones (default) */
+  --bg: #f3ebdd;
+  --surface: #eaddc7;
+  --surface-raised: #e0d0b6;
+  --grid-line: #c9b79c;
+  --cage-line: #5a4632;
+  --text: #3a2f24;
+  --text-dim: #8a7860;
+  --accent: #c06a34;
+  --accent-soft: rgba(192, 106, 52, 0.20);
+  --good: #6f8f4f;
+  --on-accent: #fbf3e8;
+  --overlay-scrim: rgba(244, 236, 224, 0.82);
+  --shadow: rgba(90, 70, 50, 0.22);
+  --backdrop: rgba(60, 47, 36, 0.45);
+
+  /* Safe-area insets so the board clears notches / gesture bars */
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+:root[data-theme="dark"] {
   --bg: #1e2430;
   --surface: #2a3140;
   --surface-raised: #343c4e;
@@ -17,10 +42,10 @@
   --accent: #5b9bd5;
   --accent-soft: rgba(91, 155, 213, 0.22);
   --good: #62c48a;
-
-  /* Safe-area insets so the board clears notches / gesture bars */
-  --safe-top: env(safe-area-inset-top, 0px);
-  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --on-accent: #10131a;
+  --overlay-scrim: rgba(30, 36, 48, 0.82);
+  --shadow: rgba(0, 0, 0, 0.35);
+  --backdrop: rgba(10, 12, 18, 0.6);
 }
 
 * {
@@ -94,12 +119,29 @@ button {
 .btn-primary {
   background: var(--accent);
   border-color: var(--accent);
-  color: #10131a;
+  color: var(--on-accent);
   font-weight: 600;
 }
 
 .hidden {
   display: none !important;
+}
+
+/* Theme toggle: compact square icon button in the header. Its glyph shows the
+   theme it switches *to* (set by main.js). */
+.theme-toggle {
+  background: var(--surface);
+  border: 1px solid var(--grid-line);
+  border-radius: 10px;
+  min-width: 40px;
+  min-height: 40px;
+  padding: 0 10px;
+  font-size: 18px;
+  line-height: 1;
+}
+
+.theme-toggle:active {
+  background: var(--surface-raised);
 }
 
 /* --- Board ----------------------------------------------------------------- */
@@ -192,7 +234,7 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(30, 36, 48, 0.82);
+  background: var(--overlay-scrim);
   backdrop-filter: blur(2px);
   border-radius: 8px;
   z-index: 5;
@@ -204,7 +246,7 @@ button {
   background: var(--surface-raised);
   border: 1px solid var(--grid-line);
   border-radius: 14px;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 12px 30px var(--shadow);
 }
 
 .overlay-card p {
@@ -283,7 +325,7 @@ button {
 .mode-group .mode-btn.active {
   background: var(--accent);
   border-color: var(--accent);
-  color: #10131a;
+  color: var(--on-accent);
   font-weight: 600;
 }
 
@@ -299,7 +341,7 @@ button {
 }
 
 .newgame-dialog::backdrop {
-  background: rgba(10, 12, 18, 0.6);
+  background: var(--backdrop);
 }
 
 .newgame-form h2 {
@@ -333,7 +375,7 @@ button {
 .choice.active {
   background: var(--accent);
   border-color: var(--accent);
-  color: #10131a;
+  color: var(--on-accent);
   font-weight: 600;
 }
 
