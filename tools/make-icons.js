@@ -16,10 +16,11 @@ import { fileURLToPath } from "node:url";
 
 const OUT_DIR = join(dirname(fileURLToPath(import.meta.url)), "..", "assets", "icons");
 
-const BG = [0x1e, 0x24, 0x30, 0xff]; // app background
-const GRID = [0x4a, 0x52, 0x62, 0xff]; // thin grid lines
-const CAGE = [0xe6, 0xe9, 0xef, 0xff]; // thick cage walls
-const GLYPH = [0x5b, 0x9b, 0xd5, 0xff]; // accent for the op symbols
+// Colours mirror the light (default) theme in styles/main.css.
+const BG = [0xf3, 0xeb, 0xdd, 0xff]; // app background (parchment)
+const GRID = [0xc9, 0xb7, 0x9c, 0xff]; // thin grid lines (tan)
+const CAGE = [0x5a, 0x46, 0x32, 0xff]; // thick cage walls (espresso)
+const GLYPH = [0xc0, 0x6a, 0x34, 0xff]; // accent for the op symbols (terracotta)
 
 function drawIcon(S) {
   const px = new Uint8Array(S * S * 4);

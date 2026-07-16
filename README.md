@@ -16,6 +16,8 @@ candidates for cells whose value isn't yet decided.
 - Generates Calcudoku puzzles with a **single guaranteed solution**.
 - Selectable grid size and difficulty.
 - **Pencil marks:** record candidate "maybe" values in a cell before committing.
+- **Light and dark themes** — a warm earth-toned light scheme (default) and the
+  original dark scheme, switched with a header toggle and remembered.
 - Runs fully **offline** once installed, and remembers a game in progress.
 - Installs to the home screen and runs full-screen — no app store required.
 
@@ -40,6 +42,9 @@ selection too.
 
 On a keyboard: digits to enter, arrows to move, `N` toggles notes, `U` or
 `Ctrl+Z` undoes, Backspace erases, `Esc` clears the selection.
+
+The sun/moon button in the header switches between the light and dark themes;
+your choice is remembered for next time.
 
 ## Tech
 
