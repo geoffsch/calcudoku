@@ -15,7 +15,11 @@ import {
   loadSettings,
 } from "./state/storage.js";
 
-const DEFAULT_SETTINGS = { size: 4, difficulty: "easy" };
+const DEFAULT_SETTINGS = { size: 4, difficulty: "easy", theme: "light" };
+
+// Browser-chrome colour (Android status bar / PWA splash) per theme; kept in
+// step with --bg so the frame matches the active palette.
+const THEME_COLORS = { light: "#f3ebdd", dark: "#1e2430" };
 
 const app = {
   puzzle: null,
@@ -29,6 +33,10 @@ const app = {
   solved: false,
   cellEls: null,
   ui: null,
+  // Persisted settings, mirrored here so any save writes the full set.
+  size: DEFAULT_SETTINGS.size,
+  difficulty: DEFAULT_SETTINGS.difficulty,
+  theme: DEFAULT_SETTINGS.theme,
 };
 
 // ---------------------------------------------------------------------------
@@ -164,10 +172,36 @@ function checkSolved() {
 }
 
 // ---------------------------------------------------------------------------
+// Theme
+
+// Apply a theme: swap the CSS palette (data-theme on <html>), sync the
+// browser-chrome colour, and update the toggle glyph. Pure presentation — does
+// not persist (callers decide when to save).
+function applyTheme(theme) {
+  app.theme = theme;
+  document.documentElement.dataset.theme = theme;
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.setAttribute("content", THEME_COLORS[theme] ?? THEME_COLORS.light);
+  app.ui.setThemeToggle(theme);
+}
+
+function toggleTheme() {
+  applyTheme(app.theme === "light" ? "dark" : "light");
+  persistSettings();
+}
+
+// Write the whole settings set so no field (theme / size / difficulty) is lost.
+function persistSettings() {
+  saveSettings({ size: app.size, difficulty: app.difficulty, theme: app.theme });
+}
+
+// ---------------------------------------------------------------------------
 // Game lifecycle
 
 function newGame(size, difficulty) {
-  saveSettings({ size, difficulty });
+  app.size = size;
+  app.difficulty = difficulty;
+  persistSettings();
   app.ui.setDialogDefaults(size, difficulty);
   app.ui.showOverlay(`<div class="overlay-card"><p>Generating ${size}×${size} ${difficulty}…</p></div>`);
 
@@ -240,6 +274,7 @@ function init() {
     onMode: setMode,
     onErase: erase,
     onUndo: undo,
+    onToggleTheme: toggleTheme,
   });
 
   attachBoardInput(app.ui.board, { onSelect: selectCell });
@@ -254,6 +289,9 @@ function init() {
   });
 
   const settings = loadSettings() ?? DEFAULT_SETTINGS;
+  app.size = settings.size;
+  app.difficulty = settings.difficulty;
+  applyTheme(settings.theme ?? DEFAULT_SETTINGS.theme);
   app.ui.setDialogDefaults(settings.size, settings.difficulty);
 
   const saved = loadGame();

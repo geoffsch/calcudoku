@@ -51,13 +51,17 @@ export function saveSettings(settings) {
   write(SETTINGS_KEY, { schema: SCHEMA, ...settings });
 }
 
-// Returns { size, difficulty } or null.
+// Returns { size, difficulty, theme? } or null. `theme` is only present when a
+// valid value was stored; an absent/invalid theme is omitted so the caller can
+// fall back to its default (light).
 export function loadSettings() {
   const data = read(SETTINGS_KEY);
   if (!data || data.schema !== SCHEMA) return null;
-  const { size, difficulty } = data;
+  const { size, difficulty, theme } = data;
   if (!Number.isInteger(size) || typeof difficulty !== "string") return null;
-  return { size, difficulty };
+  const out = { size, difficulty };
+  if (theme === "light" || theme === "dark") out.theme = theme;
+  return out;
 }
 
 // ---------------------------------------------------------------------------
